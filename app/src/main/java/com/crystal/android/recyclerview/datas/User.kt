@@ -1,4 +1,4 @@
-package com.crystal.android.recyclerview
+package com.crystal.android.recyclerview.datas
 
 data class User(
     val id: Int,

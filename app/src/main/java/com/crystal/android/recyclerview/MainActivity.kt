@@ -5,16 +5,20 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crystal.android.recyclerview.adapters.UserAdapter
 import com.crystal.android.recyclerview.databinding.ActivityMainBinding
 import com.crystal.android.recyclerview.datas.User
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: UserAdapter
     private var userList = mutableListOf<User>()
+    private val itemTouchSimpleCallback = ItemTouchSimpleCallback()
+    private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +42,22 @@ class MainActivity : AppCompatActivity() {
 
         // DiffUtil 적용 후 데이터 추가
         adapter.differ.submitList(userList)
+
+        // itemTouchSimpleCallback 인터페이스로 추가 작업
+        itemTouchSimpleCallback.setOnItemMoveListener(object : ItemTouchSimpleCallback.OnItemMoveListener {
+            override fun onItemMove(from: Int, to: Int) {
+                Log.d("MainActivity", "from Position : $from, to Position : $to")
+                //Collections.swap(userList, from, to)
+
+                // userList != adapter.differ.currentList
+                // adapter.differ.currentList는 계속 값을 변경했지만 userList는 변경 전 값(왜냐면 우리는 변경한적이 없다.)
+                Log.d("MainActivity", "userList: $userList")
+                Log.d("MainActivity", "differ currentList: ${adapter.differ.currentList}")
+            }
+        })
+
+        // itemTouchHelper와 recyclerview 연결
+        itemTouchHelper.attachToRecyclerView(binding.recyclerview)
 
         // 아이템 추가 버튼 클릭 시 이벤트(userList에 아이템 추가)
         binding.addButton.setOnClickListener {

@@ -33,10 +33,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     override fun onResume() {
         super.onResume()
 
+        initRecyclerView()
+        setupEvents()
+
+    }
+
+    private fun initRecyclerView() {
         // RecyclerView에 리스트 추가 및 어댑터 연결
         adapter = UserAdapter(this)
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
@@ -48,13 +53,8 @@ class MainActivity : AppCompatActivity() {
         // itemTouchSimpleCallback 인터페이스로 추가 작업
         itemTouchSimpleCallback.setOnItemMoveListener(object : ItemTouchSimpleCallback.OnItemMoveListener {
             override fun onItemMove(from: Int, to: Int) {
+                // Collections.swap(userList, from, to) 처럼 from, to가 필요하다면 사용
                 Log.d("MainActivity", "from Position : $from, to Position : $to")
-                //Collections.swap(userList, from, to)
-
-                // userList != adapter.differ.currentList
-                // adapter.differ.currentList는 계속 값을 변경했지만 userList는 변경 전 값(왜냐면 우리는 변경한적이 없다.)
-                Log.d("MainActivity", "userList: $userList")
-                Log.d("MainActivity", "differ currentList: ${adapter.differ.currentList}")
             }
         })
 
@@ -62,14 +62,13 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(binding.recyclerview)
 
         // RecyclerView의 다른 곳을 터치하거나 Swipe 시 기존에 Swipe된 것은 제자리로 변경
-        // 아래 코드가 경고 표시를 주는데 이것은 Annotation @SuppressLint("ClickableViewAccessibility")을 함수에 추가하면 됨
-        // 또는, performClick 사용
         binding.recyclerview.setOnTouchListener { _, _ ->
             itemTouchSimpleCallback.removePreviousClamp(binding.recyclerview)
             false
         }
+    }
 
-
+    private fun setupEvents() {
         // 아이템 추가 버튼 클릭 시 이벤트(userList에 아이템 추가)
         binding.addButton.setOnClickListener {
 
@@ -94,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "${mUser.name}이 추가되었습니다.", Toast.LENGTH_SHORT).show()
 
             // 추가된 포지션으로 스크롤 이동
-            binding.recyclerview.scrollToPosition(userList.indexOf(mUser))
+            binding.recyclerview.scrollToPosition(newList.indexOf(mUser))
         }
     }
 

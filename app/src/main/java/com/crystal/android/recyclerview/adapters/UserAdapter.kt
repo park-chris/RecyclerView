@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +20,26 @@ class UserAdapter(
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
+        private val swipeView: LinearLayout = itemView.findViewById(R.id.swipe_view)
         private val userImage: ImageView = itemView.findViewById(R.id.user_image)
         private val userNameText: TextView = itemView.findViewById(R.id.user_name_text)
+        private val removeTextView: TextView = itemView.findViewById(R.id.remove_text_view)
 
         fun bind(user: User) {
 
+            // 재사용 시 Swipe가 되어있다면 Swipe 원상복구
+            swipeView.translationX = 0f
+
             userNameText.text = user.name
+
+            removeTextView.setOnClickListener {
+                val list = arrayListOf<User>()
+                list.addAll(differ.currentList)
+                list.remove(user)
+
+                // 해당 아이템 삭제 adapter에 알리기기
+               differ.submitList(list)
+            }
 
         }
     }

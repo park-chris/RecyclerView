@@ -1,5 +1,6 @@
 package com.crystal.android.recyclerview
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     override fun onResume() {
         super.onResume()
 
@@ -58,6 +60,15 @@ class MainActivity : AppCompatActivity() {
 
         // itemTouchHelper와 recyclerview 연결
         itemTouchHelper.attachToRecyclerView(binding.recyclerview)
+
+        // RecyclerView의 다른 곳을 터치하거나 Swipe 시 기존에 Swipe된 것은 제자리로 변경
+        // 아래 코드가 경고 표시를 주는데 이것은 Annotation @SuppressLint("ClickableViewAccessibility")을 함수에 추가하면 됨
+        // 또는, performClick 사용
+        binding.recyclerview.setOnTouchListener { _, _ ->
+            itemTouchSimpleCallback.removePreviousClamp(binding.recyclerview)
+            false
+        }
+
 
         // 아이템 추가 버튼 클릭 시 이벤트(userList에 아이템 추가)
         binding.addButton.setOnClickListener {

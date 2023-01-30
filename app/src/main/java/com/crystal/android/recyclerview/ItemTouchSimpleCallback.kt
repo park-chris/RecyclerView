@@ -1,6 +1,7 @@
 package com.crystal.android.recyclerview
 
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -51,8 +52,22 @@ class ItemTouchSimpleCallback : ItemTouchHelper.SimpleCallback(
         val list = arrayListOf<User>()
         list.addAll(adapter.differ.currentList)
 
+/*  수정 전
         // 리스트 순서 바꿈
         Collections.swap(list, fromPosition, toPosition)
+*/
+
+/* 수정 후 */
+        // 리스트 순서 바꿈
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(list, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(list, i, i - 1)
+            }
+        }
 
         // adapter.notifyItemMoved(fromPosition, toPosition)
         adapter.differ.submitList(list)

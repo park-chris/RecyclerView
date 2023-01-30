@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.crystal.android.recyclerview.adapters.UserAdapter
 import com.crystal.android.recyclerview.databinding.ActivityMainBinding
 import com.crystal.android.recyclerview.datas.User
@@ -66,6 +67,15 @@ class MainActivity : AppCompatActivity() {
             itemTouchSimpleCallback.removePreviousClamp(binding.recyclerview)
             false
         }
+
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                if (fromPosition == 0 || toPosition == 0) {
+                    binding.recyclerview.scrollToPosition(0)
+                }
+            }
+        })
+
     }
 
     private fun setupEvents() {
